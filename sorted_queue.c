@@ -19,14 +19,30 @@ void squeue_free(SortedQueue *q) {
  * ---------------------------------------------------------------
  * input: q
  * output: status
- * while queue_getFront(q)< ele do 
-        queue_push(q, queue_pop(q))
-    end 
-    queue_push (q,ele)
-    while queue_getFront(q)> ele do 
-        queue_push(q, queue_pop(q))
-    end
-    return OK
+
+if queue_getFront(q) < ele and queue_getBack(q) < ele 
+   queue_push (q,ele)
+endif 
+
+if queue_getFront(q) > ele and queue_getBack(q) > ele 
+  queue_push (q,ele) 
+  while queue_getFront(q) > queue_getBack(q) do 
+    queue_push(q, queue_pop(q))
+  end
+endif 
+
+if queue_getFront(q) < ele and queue_getBack(q) > ele
+  while queue_getFront(q) < ele  do 
+    queue_push(q, queue_pop(q))
+  end
+  queue_push (q,ele)
+  while queue_getFront(q) > queue_getBack(q) do 
+    queue_push(q, queue_pop(q))
+  end
+endif
+return OK 
+
+    
  * ---------------------------------------------------------------
  * @param q, puntero a la cola.
  * @param ele, puntero al elemento a insertar.
@@ -55,7 +71,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp) {
       if (!st) return st;
     }
   } else if ((pcmp(queue_getFront(q),ele) < 0) && (pcmp(queue_getBack(q),ele) > 0)){
-    while (pcmp(queue_getFront(q),ele) > 0){
+    while (pcmp(queue_getFront(q),ele) < 0){
       st = queue_push(q, queue_pop(q));
       if (!st) return st;
     }
@@ -68,68 +84,6 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp) {
   }
 
   return st;
-
-  /*
-
-  if (queue_size(q) == 1){  
-    st = queue_push(q, ele);
-    if (!st) return st;
-    
-    if (pcmp(queue_getBack(q),ele) < 0){
-      eleAux = queue_pop(q);
-      st = queue_push(q, eleAux);      
-    }
-    return st;
-  }
-  else if (pcmp(queue_getFront(q),ele) < 0){
-    st = queue_push(q, eleAux);
-    if (!st) return st; 
-  }
-  else if (pcmp(queue_getBack(q),ele) > 0){
-    st = queue_push(q, ele);
-    return st;
-  }
-  else if (pcmp(queue_getBack(q),ele) < 0){
-    while (pcmp(queue_getFront(q),ele) > 0){
-      eleAux = queue_pop(q);
-      st = queue_push(q, eleAux);
-      if (!st) return st;
-    }
-    st = queue_push(q, ele);
-    if (!st) return st;
-  }
-  
-  while (pcmp(queue_getFront(q),queue_getBack(q)) < 0){
-    eleAux = queue_pop(q);
-    st = queue_push(q, eleAux);
-    if (!st) return st;
-  }  
-
-  return st;
-
-
-
-  if ((pcmp(queue_getBack(q),ele) > 0) && (pcmp(queue_getFront(q),ele) < 0)){
-    do{
-      eleAux = queue_pop(q);
-      st = queue_push(q, eleAux);
-      if (!st) return st;
-    } while (pcmp(queue_getFront(q),ele) < 0);
-    st = queue_push(q, ele);
-    return st;
-  } else {
-    eleAux = queue_pop(q);
-    st = queue_push(q, eleAux);
-    if (!st) return st;
-  }
-
-  while (pcmp(queue_getBack(q),queue_getFront(q)) < 0){
-    eleAux = queue_pop(q);
-    st = queue_push(q, eleAux);
-    if (!st) return st;
-  }
-  
-  return st; */
 }
 
 /*--------------------------------------------------------------------------*/

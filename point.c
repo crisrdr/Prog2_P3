@@ -1,4 +1,5 @@
 #include "point.h"
+#include <math.h>
 
 /* FUNCION PRIVADA POTENCIA DE NUMERO num ELEVADO A i */
 
