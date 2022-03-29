@@ -217,7 +217,7 @@ Status point_euDistance (const Point *p1, const Point *p2, double *distance);
  * @return It returns an integer less than, equal to, or greater than zero if
  * the euclidean distance of p1 to the origin of coordinates is found,  
  * respectively, to be less than, to match or be greater 
- * than the euclidean distance of p2. In case of error, returns INT_MIN. 
+ * than the euclidean distance of p2. In case of error, returns (- __INT_MAX__). 
  */
 int point_cmpEuDistance (const void *p1, const void *p2); 
 

@@ -145,11 +145,11 @@ int point_cmpEuDistance (const void *p1, const void *p2){
     Point *origin;
     double d1, d2;
     if ((origin = point_new(0,0,BARRIER)) == ERROR){
-        return INT_MIN;
+        return (- __INT_MAX__);
     }
 
     if ((point_euDistance(p1, origin, &d1) == ERROR) || ((point_euDistance(p2, origin, &d2)) == ERROR)){
-        return INT_MIN;
+        return (- __INT_MAX__);
     }
 
     point_free(origin);
