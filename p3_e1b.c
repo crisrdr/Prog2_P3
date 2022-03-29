@@ -24,7 +24,8 @@ int main(){
   Status st = OK;
   int *ele;
   int i, n;
-  Point **p;
+  Point **p = NULL, *origin = NULL;
+  double distance=0;
 
   printf("Número de enteros a insertar en la cola: ");
   scanf("%d", &n);
@@ -49,9 +50,10 @@ int main(){
   }
 
   /* Impresión de la cola de enteros ordenada */
-  fprintf(stdout,"\n----ORDERED QUEUE OF INT----\n");
+  fprintf(stdout,"----ORDERED QUEUE OF INT----\n");
   fprintf(stdout,"Queue size: %ld\n",queue_size(q));
   queue_print(stdout, q, int_print);
+  fprintf(stdout,"\n");
 
   free(ele);
   queue_free(q);
@@ -66,15 +68,31 @@ int main(){
     return EXIT_FAILURE;
   }
 
-  /* Generación e inserción de los puntos de forma ordenada en la cola*/
+  origin = point_new(0, 0, BARRIER);
+
+  /* Generación e inserción de los puntos de forma ordenada en la cola */
   srand(time(NULL));          
-  for (i=0; i < n; i++){
+  for (i=0; i < n; i++,distance=0){
     if ((p[i] = point_new(rand() % MAX_RAND_P + 1, rand() % MAX_RAND_P + 1, BARRIER)) == NULL){
       free(p);
       queue_free(q);
       return EXIT_FAILURE;
     }
-    st = squeue_push(q, &p[i], point_cmpEuDistance);
+
+    fprintf(stdout, "Point p[%d]=",i);
+    point_print(stdout,p[i]);
+    if ((point_euDistance(origin, p[i], &distance)) == ERROR){      /* Distancia de los puntos al origen */
+      fprintf(stdout,"Run failed\n");     
+      free(p);
+      point_free(origin);        
+      for (i=0;i<n;i++){
+        point_free(p[i]);
+      }
+      return 1;
+    }
+    fprintf(stdout," distance: %.6f\n", distance);
+
+    st = squeue_push(q, p[i], point_cmpEuDistance);
     if (st == ERROR){
       free(p);
       queue_free(q);
@@ -83,9 +101,11 @@ int main(){
   }
 
   /* Impresión de la cola de puntos ordenada */
-  fprintf(stdout,"\n----ORDERED QUEUE OF POINTS----\n");
+  fprintf(stdout,"i = %d\n",i);
+  fprintf(stdout,"----ORDERED QUEUE OF POINTS----\n");
   fprintf(stdout,"Queue size: %ld\n",queue_size(q));
   queue_print(stdout, q, point_print);
+  fprintf(stdout,"\n");
 
   free(ele);
   queue_free(q);

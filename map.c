@@ -264,3 +264,35 @@ Point *map_dfs (FILE *pf, Map *mp){
     }
     return NULL;
 }
+/**
+1. Inicializar una cola auxiliar.
+2. Insertar el punto de inicio en la cola auxiliar.
+3. Mientras la cola no este vacia:
+    3.1. Extraer un punto de la cola y marcarlo como visitado.
+    3.2. Si el punto extraido es el punto de llegada, salir del bucle.
+    3.3. Si el punto extraido no es el punto de llegada y no ha sido
+    visitado, explorar sus vecinos:
+        3.3.1. Si el vecino explorado no ha sido visitado, insertarlo en
+        la cola.
+4. Liberar recursos
+
+* @brief: Makes a search from the origin point to the output point
+* of a map using the breadth-first search algorithm and the ADT
+Queue
+*
+* The function prints each visited point while traversing the map
+*
+* @param pf, File descriptor
+* @param mp, Pointer to map
+*
+* @return The function returns the output map point o NULL otherwise
++++++
++··i+
++o··+
++++++
+**/
+Point * map_bfs (FILE *pf, Map *mp){
+    
+    if(!pf || !mp) return NULL;
+
+}
