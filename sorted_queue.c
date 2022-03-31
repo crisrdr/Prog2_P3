@@ -61,7 +61,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp) {
   }
 
   if ((pcmp(queue_getFront(q),ele) < 0) && (pcmp(queue_getBack(q),ele) < 0)){
-    st = queue_push(q,ele);
+    st = queue_push(q,ele); 
   }
   else if ((pcmp(queue_getFront(q),ele) > 0) && (pcmp(queue_getBack(q),ele) > 0)){
     st = queue_push(q, ele);

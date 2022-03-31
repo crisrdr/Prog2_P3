@@ -38,9 +38,9 @@ int main(){
   }
 
   /* Inserción de los enteros en la cola de forma ordenada con squeue_push */
-  srand(time(NULL));          
+  srand(time(NULL));                                    fprintf(stdout,"Numeros a insertar:\n");
   for (i=0; i < n; i++){
-    ele[i] = rand() % MAX_RAND + 1;
+    ele[i] = rand() % MAX_RAND + 1;                     fprintf(stdout,"%d\n",ele[i]);
     st = squeue_push(q, &ele[i], int_cmp);
     if (st == ERROR){
       free(ele);
