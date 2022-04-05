@@ -3,12 +3,29 @@
 EXE_1 = p3_e1b
 OBJ_1 = $(EXE_1).o sorted_queue.o libqueue.a point.o
 
+EXE_2 = p3_e2
+OBJ_2 = $(EXE_2).o libqueue.a point.o map.o
+
 GCC = gcc -Wall -ansi -pedantic -c -g
 GCC_MATH = g++ -L /usr/lib
 
+VAL = valgrind --leak-check=full
+
 ##################### COMANDOS MAKE ######################
 
-all_1: $(EXE_1)
+all: $(EXE_1) $(EXE_2)
+
+sorted_queue.o: sorted_queue.c sorted_queue.h queue.h types.h
+	$(GCC) sorted_queue.c
+
+point.o: point.c point.h types.h
+	$(GCC) point.c
+
+map.o: map.c map.h point.h types.h
+	$(GCC) map.c
+
+clean:
+	rm *.o $(EXE_1)
 
 # EJERCICIO 1 #
 
@@ -18,17 +35,22 @@ p3_e1b: $(OBJ_1)
 p3_e1b.o: $(EXE_1).c sorted_queue.h queue.h types.h point.h
 	$(GCC) $(EXE_1).c
 
-sorted_queue.o: sorted_queue.c sorted_queue.h queue.h types.h
-	$(GCC) sorted_queue.c
-
-point.o: point.c point.h types.h
-	$(GCC) point.c
-
 run1: 
 	./$(EXE_1)
 
 val1:
-	valgrind --leak-check=full ./$(EXE_1)
+	$(VAL) ./$(EXE_1)
 
-clean:
-	rm *.o $(EXE_1)
+# EJERCICIO 2 #
+
+p3_e2: $(OBJ_2)
+	gcc -o $(EXE_2) $(OBJ_2)
+
+p3_e2.o: $(EXE_2).c map.h point.h types.h
+	$(GCC) $(EXE_2).c
+
+run2: 
+	./$(EXE_2)
+
+val2:
+	$(VAL) ./$(EXE_2)
