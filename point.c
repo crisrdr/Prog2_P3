@@ -89,7 +89,7 @@ Bool point_getVisited (const Point *p){
 }
 
 Status point_setVisited (Point *p, Bool bol){
-    if (!p || !bol) return ERROR;
+    if (!p || (bol != TRUE && bol != FALSE)) return ERROR;
 
     p->visited = bol;
 

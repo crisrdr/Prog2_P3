@@ -18,7 +18,7 @@ Map * map_new (unsigned int nrows,  unsigned int ncols){
     int i, j;
     Map *map = NULL;
 
-    if (!ncols || !nrows || nrows <= 0 || nrows >= MAX_NROWS || ncols <= 0 || ncols >= MAX_NCOLS) return NULL;
+    if (!ncols || !nrows || nrows <= 0 || nrows > MAX_NROWS || ncols <= 0 || ncols > MAX_NCOLS) return NULL;
 
     if ((map = (Map*) malloc (sizeof(Map))) == NULL) return NULL;
     
@@ -58,7 +58,7 @@ void map_free (Map *g){
 
 /*inserta un punto en el mapa en las coodenadas indicadas en point*/
 Point *map_insertPoint (Map *mp, Point *p){
-    if (!p || !mp || point_getCoordinateX(p) < 0 || point_getCoordinateX(p) > MAX_NCOLS || point_getCoordinateY(p) > MAX_NROWS|| point_getCoordinateY(p) < 0) return NULL;
+    if (!p || !mp || point_getCoordinateX(p) < 0 || point_getCoordinateX(p) >= MAX_NCOLS || point_getCoordinateY(p) >= MAX_NROWS|| point_getCoordinateY(p) < 0) return NULL;
 
     if (mp->array[point_getCoordinateY(p)][point_getCoordinateX(p)] != NULL) return NULL;
 
@@ -145,6 +145,7 @@ Status map_setOutput (Map *mp, Point *p){
 /*lee el mapa de un fichero y lo devuelve*/
 Map * map_readFromFile (FILE *pf){
     Map *map = NULL;
+    Point *aux = NULL;
     unsigned int rows = 0, cols = 0;
     int i, j;
     char symb = '\0';
@@ -158,7 +159,12 @@ Map * map_readFromFile (FILE *pf){
     for (i=0; i < rows; i++) {
         for (j=0; j < cols; j++) {
             fscanf(pf, "%c", &symb);
-            map_insertPoint(map, point_new(j, i, symb));
+            if ((aux = point_new(j, i, symb)) == NULL){
+                map_free(map);
+                point_free(aux);
+                return NULL;
+            }
+            map_insertPoint(map, aux);
 
             if (symb == OUTPUT){
                 map_setOutput(map, map->array[i][j]);
@@ -178,19 +184,21 @@ Bool map_equal (const void *_mp1, const void *_mp2){
     int i, j;
     Map *mp1 = (Map *) _mp1; 
     Map *mp2 = (Map *) _mp2;
+    Status st = FALSE;
 
-    if (!_mp1 || !_mp2) return FALSE;
+    if (!_mp1 || !_mp2) return st;
     
     if ((mp1->ncols == mp2->ncols) && (mp1->nrows == mp2->nrows) && point_equal(mp1->input,mp2->input) && point_equal(mp1->output,mp2->output)){
         for (i=0; i<mp1->nrows; i++){
             for (j=0; j<mp1->ncols; j++){
-                if (!(point_equal(mp1->array[i][j],mp2->array[i][j])))
-                    return FALSE;
+                if (point_equal(mp1->array[i][j],mp2->array[i][j]))
+                    st = TRUE;
+                else return FALSE;
             }
         }
     }
     
-    return TRUE;
+    return st;
 }
 
 /*imprime en el archivo el numero de filas y columnas */
@@ -209,7 +217,7 @@ int map_print (FILE *pf, Map *mp){
     }
     return numChar;
 }
-
+/*
 Point *map_dfs (FILE *pf, Map *mp){
     Point *p = NULL, *pIn = NULL, *pOut = NULL, *pn = NULL;
     Stack *s;
@@ -263,7 +271,8 @@ Point *map_dfs (FILE *pf, Map *mp){
         p = pn;
     }
     return NULL;
-}
+} */
+
 /**
 1. Inicializar una cola auxiliar.
 2. Insertar el punto de inicio en la cola auxiliar.
