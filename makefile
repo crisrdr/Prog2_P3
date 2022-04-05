@@ -21,7 +21,7 @@ sorted_queue.o: sorted_queue.c sorted_queue.h queue.h types.h
 point.o: point.c point.h types.h
 	$(GCC) point.c
 
-map.o: map.c map.h point.h types.h
+map.o: map.c map.h point.h types.h queue.h
 	$(GCC) map.c
 
 clean:
@@ -44,9 +44,9 @@ val1:
 # EJERCICIO 2 #
 
 p3_e2: $(OBJ_2)
-	gcc -o $(EXE_2) $(OBJ_2)
+	$(GCC_MATH) -o $(EXE_2) $(OBJ_2)
 
-p3_e2.o: $(EXE_2).c map.h point.h types.h
+p3_e2.o: $(EXE_2).c map.h point.h types.h queue.h
 	$(GCC) $(EXE_2).c
 
 run2: 

@@ -1,4 +1,5 @@
 #include "map.h"    /* Comprobar [rows][cols]... etc */
+#include "queue.h"
 
 #define MAX_NCOLS 64            /* Maximun map cols */
 #define MAX_NROWS 64            /* Maximun map rows */
@@ -295,13 +296,80 @@ Queue
 * @param mp, Pointer to map
 *
 * @return The function returns the output map point o NULL otherwise
-+++++
-+··i+
-+o··+
-+++++
+
+    +++++
+    +··i+
+    +o··+
+    +++++
+
 **/
 Point * map_bfs (FILE *pf, Map *mp){
-    
+    Queue *q = NULL;
+    Point *pIn = NULL, *pOut = NULL, *p = NULL, *pn = NULL;
+    Status st = OK;
+    int i;
+
     if(!pf || !mp) return NULL;
+
+    if ((pIn = map_getInput (mp)) == NULL) return NULL;
+    if ((pOut = map_getOutput (mp)) == NULL) return NULL;
+
+/* 1. Inicializar una cola auxiliar. */
+    if ((q = queue_new()) == NULL) return NULL;
+
+/* 2. Insertar el punto de inicio en la cola auxiliar. */
+    st = queue_push(q, pIn);
+    if (!st){
+        queue_free(q);
+        return NULL;
+    }
+
+    while ((point_getVisited(pOut) == FALSE) && (queue_isEmpty(q) == FALSE)){   /* 3. Mientras la cola no este vacia: */
+       
+        /* 3.1. Extraer un punto de la cola y marcarlo como visitado. */
+        if ((p = (Point*)queue_pop(q)) == NULL){
+            queue_free(q);
+            return NULL;
+        }
+        if (point_getVisited(p) == FALSE){
+            if (point_setVisited(p, TRUE) == ERROR){
+                queue_free(q);
+                return NULL;
+            }
+            if ((point_print(pf,p)) == -1){
+                queue_free(q);
+                return NULL;
+            }
+        }
+
+        /* 3.2. Si el punto extraido es el punto de llegada, salir del bucle. */
+        if (p == pOut){
+            fprintf(pf,"\n");
+            queue_free(q);
+            return p;
+        }
+
+        /* 3.3. Si el punto extraido no es el punto de llegada y no ha sido visitado, explorar sus vecinos: */
+        if (point_getVisited(p) == FALSE){
+            for (i=0; i<4; i++){
+                if ((pn = map_getNeighboor(mp, p, i)) == NULL){
+                    queue_free(q);
+                    return NULL;
+                }
+                /* 3.3.1. Si el vecino explorado no ha sido visitado, insertarlo en la cola. */
+                if (point_getVisited(pn) == FALSE && point_getSymbol(pn) != BARRIER){
+                    if ((queue_push(q, pn)) == ERROR){
+                        queue_free(q);
+                        return NULL;
+                    }
+                }
+            }
+        
+        p = pn;
+        }
+    }
+    return NULL;
+
+
 
 }
