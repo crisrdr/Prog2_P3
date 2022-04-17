@@ -15,7 +15,7 @@ typedef enum {
     UP = 1,
     LEFT = 2,
     DOWN = 3,       
-    STAY = 4,
+    STAY = 4
 } Position;
 
 typedef struct _Map Map;
