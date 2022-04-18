@@ -24,6 +24,12 @@ point.o: point.c point.h types.h
 map.o: map.c map.h point.h types.h queue.h
 	$(GCC) map.c
 
+list.o: list.c list.h types.h
+	$(GCC) list.c
+
+queue.o: queue.c list.h types.h queue.h
+	$(GCC) queue.c
+
 clean:
 	rm *.o $(EXE_1) $(EXE_2)
 
