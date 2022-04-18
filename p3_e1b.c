@@ -38,9 +38,9 @@ int main(){
   }
 
   /* Inserción de los enteros en la cola de forma ordenada con squeue_push */
-  srand(time(NULL));                                    fprintf(stdout,"Numeros a insertar:\n");
+  srand(time(NULL));
   for (i=0; i < n; i++){
-    ele[i] = rand() % MAX_RAND + 1;                     fprintf(stdout,"%d\n",ele[i]);
+    ele[i] = rand() % MAX_RAND + 1;
     st = squeue_push(q, &ele[i], int_cmp);
     if (st == ERROR){
       free(ele);
@@ -74,8 +74,12 @@ int main(){
   srand(time(NULL));          
   for (i=0; i < n; i++,distance=0){
     if ((p[i] = point_new(rand() % MAX_RAND_P + 1, rand() % MAX_RAND_P + 1, BARRIER)) == NULL){
-      free(p);
       queue_free(q);
+      point_free(origin);
+      for (;i>=0;i--){
+        point_free(p[i]);
+      }
+      free(p);
       return EXIT_FAILURE;
     }
 
@@ -83,32 +87,40 @@ int main(){
     point_print(stdout,p[i]);
     if ((point_euDistance(origin, p[i], &distance)) == ERROR){      /* Distancia de los puntos al origen */
       fprintf(stdout,"Run failed\n");     
-      free(p);
+      queue_free(q);
       point_free(origin);        
-      for (i=0;i<n;i++){
+      for (;i>=0;i--){
         point_free(p[i]);
       }
-      return 1;
+      free(p);
+      return EXIT_FAILURE;
     }
     fprintf(stdout," distance: %.6f\n", distance);
 
     st = squeue_push(q, p[i], point_cmpEuDistance);
     if (st == ERROR){
-      free(p);
       queue_free(q);
+      point_free(origin);        
+      for (;i>=0;i--){
+        point_free(p[i]);
+      }
+      free(p);
       return EXIT_FAILURE;
     }
   }
 
   /* Impresión de la cola de puntos ordenada */
-  fprintf(stdout,"i = %d\n",i);
   fprintf(stdout,"----ORDERED QUEUE OF POINTS----\n");
   fprintf(stdout,"Queue size: %ld\n",queue_size(q));
   queue_print(stdout, q, point_print);
   fprintf(stdout,"\n");
 
-  free(ele);
   queue_free(q);
+  point_free(origin);
+  for (i=0;i<n;i++){
+    point_free(p[i]);
+  }
+  free(p);
 
   return EXIT_SUCCESS;
 }

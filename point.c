@@ -155,5 +155,9 @@ int point_cmpEuDistance (const void *p1, const void *p2){
 
     point_free(origin);
 
-    return (d1-d2);
+    if (d1<d2) return -1;
+
+    if (d1>d2) return 1;
+
+    return 0;
 }

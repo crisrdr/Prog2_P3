@@ -13,7 +13,7 @@ VAL = valgrind --leak-check=full
 
 ##################### COMANDOS MAKE ######################
 
-all: $(EXE_1) $(EXE_2)
+all: $(EXE_1)
 
 sorted_queue.o: sorted_queue.c sorted_queue.h queue.h types.h
 	$(GCC) sorted_queue.c

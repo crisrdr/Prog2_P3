@@ -60,16 +60,12 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp) {
     return st;
   }
 
-  if ((pcmp(queue_getFront(q),ele) < 0) && (pcmp(queue_getBack(q),ele) < 0)){
+  if ((pcmp(queue_getFront(q),ele) < 0) && (pcmp(queue_getBack(q),ele) <= 0)){
     st = queue_push(q,ele); 
   }
-  else if ((pcmp(queue_getFront(q),ele) > 0) && (pcmp(queue_getBack(q),ele) > 0)){
+  else if (pcmp(queue_getFront(q),ele) >= 0){
     st = queue_push(q, ele);
     if (!st) return st;
-    while(pcmp(queue_getFront(q),queue_getBack(q)) > 0){
-      st = queue_push(q, queue_pop(q));
-      if (!st) return st;
-    }
   } else if ((pcmp(queue_getFront(q),ele) < 0) && (pcmp(queue_getBack(q),ele) > 0)){
     while (pcmp(queue_getFront(q),ele) < 0){
       st = queue_push(q, queue_pop(q));
@@ -77,10 +73,11 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp) {
     }
     st = queue_push(q,ele);
     if (!st) return st;
-    while (pcmp(queue_getFront(q),queue_getBack(q)) > 0){
-      st = queue_push(q,queue_pop(q));
-      if (!st) return st;
-    }
+  }
+
+  while (pcmp(queue_getFront(q),queue_getBack(q)) > 0){
+    st = queue_push(q, queue_pop(q));
+    if (!st) return st;
   }
 
   return st;
