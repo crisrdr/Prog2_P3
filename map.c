@@ -314,7 +314,7 @@ Point * map_bfs (FILE *pf, Map *mp){
     if ((pIn = map_getInput (mp)) == NULL) return NULL;
     if ((pOut = map_getOutput (mp)) == NULL) return NULL;
 
-/* 1. Inicializar una cola auxiliar. */
+/* 1. Inicializar una cola auxiliar */
     if ((q = queue_new()) == NULL) return NULL;
 
 /* 2. Insertar el punto de inicio en la cola auxiliar. */
@@ -324,14 +324,29 @@ Point * map_bfs (FILE *pf, Map *mp){
         return NULL;
     }
 
-    while ((point_getVisited(pOut) == FALSE) && (queue_isEmpty(q) == FALSE)){   /* 3. Mientras la cola no este vacia: */
+    /* 3. Mientras la cola no este vacia: */
+    while (queue_isEmpty(q) == FALSE){   
        
-        /* 3.1. Extraer un punto de la cola y marcarlo como visitado. */
+        /* 3.1. Extraer un punto de la cola */
         if ((p = (Point*)queue_pop(q)) == NULL){
             queue_free(q);
             return NULL;
         }
+
+        /* 3.2. Si el punto extraido es el punto de llegada, salir del bucle. */
+        if (p == pOut){
+            if ((point_print(pf,p)) == -1){
+                queue_free(q);
+                return NULL;
+            }
+            fprintf(pf,"\n");
+            queue_free(q);
+            return p;
+        }
+
+        /* 3.3. Si el punto extraido no es el punto de llegada y no ha sido visitado */
         if (point_getVisited(p) == FALSE){
+            /* 3.3.1. Marcarlo como visitado. */
             if (point_setVisited(p, TRUE) == ERROR){
                 queue_free(q);
                 return NULL;
@@ -340,17 +355,7 @@ Point * map_bfs (FILE *pf, Map *mp){
                 queue_free(q);
                 return NULL;
             }
-        }
-
-        /* 3.2. Si el punto extraido es el punto de llegada, salir del bucle. */
-        if (p == pOut){
-            fprintf(pf,"\n");
-            queue_free(q);
-            return p;
-        }
-
-        /* 3.3. Si el punto extraido no es el punto de llegada y no ha sido visitado, explorar sus vecinos: */
-        if (point_getVisited(p) == FALSE){
+            /* 3.3.2. Explorar sus vecinos */
             for (i=0; i<4; i++){
                 if ((pn = map_getNeighboor(mp, p, i)) == NULL){
                     queue_free(q);
@@ -364,12 +369,10 @@ Point * map_bfs (FILE *pf, Map *mp){
                     }
                 }
             }
-        
-        p = pn;
         }
     }
+    /* 4. Liberar recursos */
+    queue_free(q);
+
     return NULL;
-
-
-
 }

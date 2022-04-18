@@ -5,7 +5,6 @@
 int main (int argc, char *argv[]){
     FILE *f;
     Map *map = NULL;
-    int n = 0;
 
     if (argc < 2){
         fprintf(stdout,"Arguments missing\n");

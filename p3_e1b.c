@@ -8,6 +8,7 @@
 #define MAX_RAND 100 
 #define MAX_RAND_P 10
 #define MAX_ELE 10
+#define MAX_CHAR 120
 
 /*--------PROTOTIPOS DE FUNCIONES PRIVADAS-------*/
 
@@ -16,6 +17,8 @@ int string_cmp(const void *s1, const void *s2);
 int int_cmp(const void *c1, const void *c2);
 
 int int_print (FILE *pf, const void *a);
+
+int str_print(FILE *f, const void *x);
 
 /*----------------------------------------------*/
 
@@ -26,9 +29,15 @@ int main(){
   int i, n;
   Point **p = NULL, *origin = NULL;
   double distance=0;
+  char array[MAX_ELE][MAX_CHAR]={"nata","queso","vaca","zumo","maiz","cereza","trigo","tomate","azucar","tarta"};
 
-  printf("Número de enteros a insertar en la cola: ");
+  /* Solicitud de enteros a insertar */
+  printf("Introduzca el número de enteros a insertar en la cola (entre 1 y 10): ");
   scanf("%d", &n);
+  while (n<1 || n>10){
+    printf("Debe encontrarse en el intervalo [1,10]: ");
+    scanf("%d", &n);
+  }
 
   if ((ele = (int*) malloc (n*sizeof(int))) == NULL) return EXIT_FAILURE;
 
@@ -58,8 +67,13 @@ int main(){
   free(ele);
   queue_free(q);
 
-  printf("Número de puntos a insertar en la cola: ");
+  /* Solicitud de enteros a insertar */
+  printf("Introduzca el número de puntos a insertar en la cola (entre 1 y 10): ");
   scanf("%d", &n);
+  while (n<1 || n>10){
+    printf("Debe encontrarse en el intervalo [1,10]: ");
+    scanf("%d", &n);
+  }
 
   if ((p = (Point**) malloc (n*sizeof(Point*))) == NULL) return EXIT_FAILURE;
 
@@ -122,6 +136,25 @@ int main(){
   }
   free(p);
 
+  if ((q = queue_new()) == NULL){
+    free(p);
+    return EXIT_FAILURE;
+  }
+
+  /* Inserción de las palabras de forma ordenada en la cola */
+  for (i=0; i< MAX_ELE; i++){
+    st = squeue_push(q, array[i], string_cmp);
+    if (!st) return st;
+  }
+
+  /* Impresión de la cola de cadenas */
+  fprintf(stdout,"----ORDERED QUEUE OF STRINGS----\n");
+  fprintf(stdout,"Queue size: %ld\n",queue_size(q));
+  queue_print(stdout, q, str_print);
+  fprintf(stdout,"\n");
+
+  queue_free(q);
+
   return EXIT_SUCCESS;
 }
 
@@ -141,4 +174,9 @@ int int_print (FILE *pf, const void *a){
     if (!pf || !a) return -1;
 
     return fprintf(pf, "%d ", *(int *)a);
+}
+
+int str_print(FILE *f, const void *x) {
+  char *z = (char *) x;
+  return fprintf(f, "%s ", z);
 }
